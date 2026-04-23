@@ -1,0 +1,16 @@
+
+erstelle mir eine webseite, die folgendes enthält:
+---
+im code der Webseite sollte diese drei Zeilen vorkommen: let a = 0.1; let b = 0.2; console.log(Ausgabe: ${a + b}); der code der webseite soll minimal sein. er soll aber die drei zeilen einerseits anzeigen, andererseits auch ausführen. Zu Schulungszwecken.
+---
+gerne auch noch die Variante mit bewusst sichtbarem Rundungsfehler, und wie kann man den rundungsfehler verhindern
+---
+Erstelle die webseite nochmals neu, so dass sie als lernbeispiel dient. in einem oberen Teil der Webseite demonstrierst du das bisherige Beispiel mit rundungsfehler, so dass der Leser dies versteht, einerseits wenn er den code anschaut, andererseits wenn er nur die Webseite sieht. in einem unteren Teil der Webseite demonstrierst du auf dieselbe Art die von dir vorgeschlagene Variante'Mit Ganzzahlen rechnen (empfohlen)'.
+---
+Die Berechnung ist auf deiner Webseite nicht sichtbar. Finde den Fehler und korrigiere.
+---
+zeige im selben stil auch noch die Aufschlüsselung der binären Form Werte a und b, je mit 1Bit Vorzeichen • 11 Bit Exponent • 52 Bit Mantisse (Bruchteil)
+---
+Füge in der Anzeige der Binären Darstellung * am Ende jeder Zeile 'Exponent und 'Mantisse' noch den jeweiligen dezimalen wert an. * nach der ersten Zeile 'Mantisse' noch eine Zeile 'mathematische Formel' ein, in der Form gemäss Bild. In der Nähe der Formael muss noch erklärt werden, dass Bias den wert von 1023 verkörpert.
+---
+Füge zwischen den worten 'mathematische' und 'formel' einen Zeilenumbruch ein

@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="de"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lernbeispiel JavaScript Rundungsfehler</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.5;
+      margin: 24px;
+      max-width: 980px;
+    }
+    section {
+      margin-bottom: 40px;
+      padding: 16px;
+      border: 1px solid #ccc;
+    }
+    h1, h2, h3 {
+      margin-top: 0;
+    }
+    pre {
+      background: #f4f4f4;
+      padding: 12px;
+      overflow-x: auto;
+      white-space: pre-wrap;
+    }
+    .output {
+      background: #fafafa;
+      border-left: 4px solid #999;
+      padding: 12px;
+      margin-top: 12px;
+      white-space: pre-wrap;
+    }
+    .hint {
+      margin-top: 12px;
+    }
+    .bits {
+      background: #fafafa;
+      padding: 12px;
+      margin-top: 12px;
+      border-left: 4px solid #999;
+      overflow-x: auto;
+      font-family: Consolas, "Courier New", monospace;
+    }
+    .bitline {
+      margin: 8px 0;
+      white-space: nowrap;
+    }
+    .sign {
+      background: #fee2e2;
+      padding: 2px 4px;
+    }
+    .exp {
+      background: #dbeafe;
+      padding: 2px 4px;
+    }
+    .mant {
+      background: #dcfce7;
+      padding: 2px 4px;
+    }
+    .legend {
+      margin-top: 10px;
+      font-size: 0.95rem;
+    }
+    code {
+      font-family: Consolas, "Courier New", monospace;
+    }
+  </style>
+</head>
+<body>
+  <h1>JavaScript: Rundungsfehler verstehen und vermeiden</h1>
+
+  <section>
+    <h2>1. Beispiel mit Rundungsfehler</h2>
+    <p>
+      In JavaScript werden Dezimalzahlen als Gleitkommazahlen gespeichert.
+      Dadurch lassen sich Werte wie <code>0.1</code> und <code>0.2</code> intern nicht exakt darstellen.
+      Deshalb ergibt die Addition sichtbar <code>0.30000000000000004</code> statt exakt <code>0.3</code>.
+    </p>
+
+    <pre id="code1">let a = 0.1;
+let b = 0.2;
+console.log(`Ausgabe: ${a + b}`);
+console.log(a + b);</pre>
+
+    <div class="output" id="output1">Ausgabe auf der Webseite:
+Ausgabe: 0.30000000000000004
+0.30000000000000004</div>
+
+    <h3>Binäre Darstellung von a, b und dem Resultat a + b (IEEE 754 Double)</h3>
+    <p>
+      Jede Zahl besteht aus <strong>1 Bit Vorzeichen</strong>, <strong>11 Bit Exponent</strong>
+      und <strong>52 Bit Mantisse</strong>. Genau diese interne Darstellung  
+      von <code>0.1</code> = 1/16 + 1/32 + 1/265 + ... und <code>0.2</code> fuehrt dazu, dasss die Werte nicht exakt gespeichert werden.
+      Auch das Resultat <code>a + b</code> laesst sich dadurch als leicht ungenauer Wert zeigen.
+      Im Exponenten wurden die <strong>2<sup>11</sup></strong> Möglichkeiten in der Mitte aufgeteilt, um sowohl positive als auch negative Werte darstellen zu können. Der <strong>Offset</strong> hat deshalb einem Wert von  <strong>1023</strong>.
+    </p>
+
+    <div class="bits" id="bits1">
+        <div class="bitline"><strong>a = 0.1</strong></div>
+        <div class="bitline">
+          <span class="sign">0</span>
+          <span class="exp">01111111011</span>
+          <span class="mant">1001100110011001100110011001100110011001100110011010</span>
+        </div>
+        <div class="bitline">Vorzeichen: 0</div>
+        <div class="bitline">Exponent: 01111111011 (dezimal: 1019)</div>
+        <div class="bitline">Mantisse: 1001100110011001100110011001100110011001100110011010 (dezimal: 2702159776422298)</div>
+      
+        <div class="bitline">Kommazahlen werden dargestellt <br>durch diese mathematische Formel: (-1)<sup>Vorzeichen</sup> x 1.Mantisse x 2<sup>(Exponent − Offset)</sup></div>
+        <div class="bitline">offset = 1023</div>
+        <div class="legend"><span class="sign">1 Bit Vorzeichen</span> <span class="exp">11 Bit Exponent</span> <span class="mant">52 Bit Mantisse</span></div><br>
+        <div class="bitline"><strong>b = 0.2</strong></div>
+        <div class="bitline">
+          <span class="sign">0</span>
+          <span class="exp">01111111100</span>
+          <span class="mant">1001100110011001100110011001100110011001100110011010</span>
+        </div>
+        <div class="bitline">Vorzeichen: 0</div>
+        <div class="bitline">Exponent: 01111111100 (dezimal: 1020)</div>
+        <div class="bitline">Mantisse: 1001100110011001100110011001100110011001100110011010 (dezimal: 2702159776422298)</div>
+      <div class="legend"><span class="sign">1 Bit Vorzeichen</span> <span class="exp">11 Bit Exponent</span> <span class="mant">52 Bit Mantisse</span></div><br>
+        <div class="bitline"><strong>a + b = 0.30000000000000004</strong></div>
+        <div class="bitline">
+          <span class="sign">0</span>
+          <span class="exp">01111111101</span>
+          <span class="mant">0011001100110011001100110011001100110011001100110100</span>
+        </div>
+        <div class="bitline">Vorzeichen: 0</div>
+        <div class="bitline">Exponent: 01111111101 (dezimal: 1021)</div>
+        <div class="bitline">Mantisse: 0011001100110011001100110011001100110011001100110100 (dezimal: 900719925474100)</div>
+      <div class="legend"><span class="sign">1 Bit Vorzeichen</span> <span class="exp">11 Bit Exponent</span> <span class="mant">52 Bit Mantisse</span></div></div>
+
+    <p class="hint">
+      Nur beim Betrachten der Webseite ist ebenfalls erkennbar, was passiert:
+      Die Ausgabe zeigt, dass das Resultat technisch leicht ungenau ist.
+    </p>
+  </section>
+
+  <section>
+    <h2>2. Empfohlene Variante: Mit Ganzzahlen rechnen</h2>
+    <p>
+      Eine robuste Loesung ist, nicht direkt mit Dezimalzahlen zu rechnen,
+      sondern mit Ganzzahlen. Statt <code>0.1</code> und <code>0.2</code> werden
+      beispielsweise <code>10</code> und <code>20</code> verwendet und anschliessend
+      durch <code>100</code> geteilt.
+    </p>
+
+    <pre id="code2">let a = 10;
+let b = 20;
+console.log(`Ausgabe: ${(a + b) / 100}`);
+console.log((a + b) / 100);</pre>
+
+    <div class="output" id="output2">Ausgabe auf der Webseite:
+Ausgabe: 0.3
+0.3</div>
+
+    <p class="hint">
+      So bleibt das Rechenergebnis exakt nachvollziehbar und es erscheint korrekt als <code>0.3</code>.
+      Dieses Vorgehen ist besonders sinnvoll bei Geldbetraegen.
+    </p>
+  </section>
+
+  <script>
+    const code1 = `let a = 0.1;
+let b = 0.2;
+console.log(\`Ausgabe: \${a + b}\`);
+console.log(a + b);`;
+
+    const code2 = `let a = 10;
+let b = 20;
+console.log(\`Ausgabe: \${(a + b) / 100}\`);
+console.log((a + b) / 100);`;
+
+    document.getElementById('code1').textContent = code1;
+    document.getElementById('code2').textContent = code2;
+
+    const output1 = [];
+    {
+      const originalLog = console.log;
+      console.log = (msg) => output1.push(String(msg));
+      let a = 0.1;
+      let b = 0.2;
+      console.log(`Ausgabe: ${a + b}`);
+      console.log(a + b);
+      console.log = originalLog;
+    }
+    document.getElementById('output1').textContent = 'Ausgabe auf der Webseite:\n' + output1.join('\n');
+
+    const output2 = [];
+    {
+      const originalLog = console.log;
+      console.log = (msg) => output2.push(String(msg));
+      let a = 10;
+      let b = 20;
+      console.log(`Ausgabe: ${(a + b) / 100}`);
+      console.log((a + b) / 100);
+      console.log = originalLog;
+    }
+    document.getElementById('output2').textContent = 'Ausgabe auf der Webseite:\n' + output2.join('\n');
+
+    function doubleToBinaryParts(value) {
+      const buffer = new ArrayBuffer(8);
+      const view = new DataView(buffer);
+      view.setFloat64(0, value, false);
+      let binary = '';
+      for (let i = 0; i < 8; i++) {
+        binary += view.getUint8(i).toString(2).padStart(8, '0');
+      }
+      return {
+        sign: binary.slice(0, 1),
+        exponent: binary.slice(1, 12),
+        mantissa: binary.slice(12)
+      };
+    }
+
+    function renderBits(label, value, showFormula = false) {
+      const parts = doubleToBinaryParts(value);
+      const exponentDecimal = parseInt(parts.exponent, 2);
+      const mantissaDecimal = parseInt(parts.mantissa, 2);
+      let html = `
+        <div class="bitline"><strong>${label} = ${value}</strong></div>
+        <div class="bitline">
+          <span class="sign">${parts.sign}</span>
+          <span class="exp">${parts.exponent}</span>
+          <span class="mant">${parts.mantissa}</span>
+        </div>
+        <div class="bitline">Vorzeichen: ${parts.sign}</div>
+        <div class="bitline">Exponent: ${parts.exponent} (dezimal: ${exponentDecimal})</div>
+        <div class="bitline">Mantisse: ${parts.mantissa} (dezimal: ${mantissaDecimal})</div>
+      `;
+      if (showFormula) {
+        html += `
+        <div class="bitline">Kommazahlen werden dargestellt<br>durch diese mathematische Formel: (-1)<sup>Vorzeichen</sup> x 1.Mantisse x 2<sup>(Exponent − offset)</sup></div>
+        <div class="bitline">offset = 1023</div>
+        `;
+      }
+      return html;
+    }
+
+    document.getElementById('bits1').innerHTML =
+      renderBits('a', 0.1, true) +
+      '<div class="legend">'
+      + '<span class="sign">1 Bit Vorzeichen</span> '
+      + '<span class="exp">11 Bit Exponent</span> '
+      + '<span class="mant">52 Bit Mantisse</span>'
+      + '</div><br>'
+      + renderBits('b', 0.2)
+      + '<div class="legend">'
+      + '<span class="sign">1 Bit Vorzeichen</span> '
+      + '<span class="exp">11 Bit Exponent</span> '
+      + '<span class="mant">52 Bit Mantisse</span>'
+      + '</div><br>'
+      + renderBits('a + b', 0.1 + 0.2)
+      + '<div class="legend">'
+      + '<span class="sign">1 Bit Vorzeichen</span> '
+      + '<span class="exp">11 Bit Exponent</span> '
+      + '<span class="mant">52 Bit Mantisse</span>'
+      + '</div>';
+  </script>
+
+
+</body></html>
